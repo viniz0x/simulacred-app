@@ -15,7 +15,7 @@ Atualizado em 2026-11-04.
 ## Plano
 
 - [x] Bloco 1: estrutura, tema e navegação entre 3 telas vazias
-- [ ] Bloco 2: tela Simular + `SimularViewModel` + validação + `CalculadoraLocal` + testes
+- [x] Bloco 2: tela Simular + `SimularViewModel` + validação + `CalculadoraLocal` + testes (branch `feat/tela-simular`)
 - [ ] Bloco 3: tela Resultado com cronograma
 - [ ] Bloco 4: Dagger 2 (componente, módulos, `ViewModelFactory`)
 - [ ] Bloco 5: Room + Histórico com Flow
@@ -24,4 +24,6 @@ Atualizado em 2026-11-04.
 
 ## Pontos de atenção
 
+- **Visual não conferido:** sem emulador, as telas só foram validadas por build, lint e testes JVM. Conferir no aparelho: campo de dinheiro, seletor de prazo, erros e fonte do sistema no máximo.
+- `SimulaCredApp` guarda o repositório à mão e o `SimularViewModel` é criado com `viewModel { }` no NavHost: provisório até o bloco do Dagger 2.
 - `docs/IA.md` precisa registrar o uso de IA **desde o início** (este scaffold foi feito com o Claude Code), não só no fim.

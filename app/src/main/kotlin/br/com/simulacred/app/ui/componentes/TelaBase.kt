@@ -34,10 +34,12 @@ fun TelaBase(
     titulo: String,
     modifier: Modifier = Modifier,
     onVoltar: (() -> Unit)? = null,
+    snackbarHost: @Composable () -> Unit = {},
     conteudo: @Composable ColumnScope.() -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
+        snackbarHost = snackbarHost,
         topBar = {
             TopAppBar(
                 title = { Text(titulo, modifier = Modifier.semantics { heading() }) },

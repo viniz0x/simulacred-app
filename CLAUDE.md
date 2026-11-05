@@ -24,6 +24,7 @@ Descritivo completo (arquitetura, plano, definição de pronto): `docs/privado/p
 - **Arquitetura:** a UI só conversa com o ViewModel; o ViewModel não conhece `Context` nem `Composable`; estado em `StateFlow`, eventos únicos em `Channel`.
 - **DI:** Dagger 2 puro (não Hilt). Se travar mais de 2 horas, `AppContainer` manual e registrar a decisão.
 - **Acessibilidade (público 50+):** texto em `sp` com base mínima de 18sp, parcela em destaque 32sp, alvos de toque >= 48dp (botões do app usam 56dp), `contentDescription` em ícones, contraste WCAG AA, textos em `strings.xml` em linguagem simples.
+- **Nomes em português no domínio e na UI** (`CalculadoraLocal`, `SimularViewModel`, `valorParcela`): exceção à regra global de nomes em inglês, porque o contrato e o descritivo usam esses nomes; termos técnicos (`Repository`, `Screen`, `UiState`) ficam em inglês.
 - **Chave de IA nunca no app:** a explicação vem do endpoint `/explicacao` do backend.
 - **Build nesta máquina:** exportar `JAVA_TOOL_OPTIONS="-Djdk.net.unixdomain.tmpdir=C:/Android/tmp"` antes do `./gradlew.bat` (ver README). Antes de dizer que algo está pronto, rodar `./gradlew.bat testDebugUnitTest assembleDebug` e informar o resultado real.
 - **Fluxo de trabalho:** uma branch e um PR por bloco do plano (`docs/privado/projeto.md`, seção 11); a vaga avalia o histórico de PRs.
