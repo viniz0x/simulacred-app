@@ -37,6 +37,8 @@
     <!-- Resultado -->
     <string name="resultado_em_construcao">Aqui vão aparecer o valor da parcela, o total a pagar e o cronograma.</string>
     <string name="resultado_codigo">Código da simulação: %1$s</string>
+    <string name="resultado_nao_encontrada">Simulação não encontrada</string>
+    <string name="resultado_nao_encontrada_explicacao">Não achamos esta simulação no aparelho. Volte e faça uma nova; leva menos de um minuto.</string>
 
     <!-- Histórico -->
     <string name="historico_vazio">Você ainda não tem simulações salvas. Elas aparecem aqui e ficam disponíveis mesmo sem internet.</string>

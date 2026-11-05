@@ -13,6 +13,7 @@ import androidx.navigation.toRoute
 import br.com.simulacred.app.SimulaCredApp
 import br.com.simulacred.app.ui.historico.HistoricoScreen
 import br.com.simulacred.app.ui.resultado.ResultadoScreen
+import br.com.simulacred.app.ui.resultado.ResultadoViewModel
 import br.com.simulacred.app.ui.simular.SimularScreen
 import br.com.simulacred.app.ui.simular.SimularViewModel
 
@@ -40,8 +41,12 @@ fun SimulaCredNavHost(
         }
         composable<ResultadoRoute> { entrada ->
             val rota = entrada.toRoute<ResultadoRoute>()
+            val app = LocalContext.current.applicationContext as SimulaCredApp
+            val viewModel: ResultadoViewModel = viewModel {
+                ResultadoViewModel(rota.simulacaoId, app.simulacaoRepository)
+            }
             ResultadoScreen(
-                simulacaoId = rota.simulacaoId,
+                viewModel = viewModel,
                 onVoltar = { navController.popBackStack() },
             )
         }
