@@ -98,6 +98,17 @@ class SimularViewModelTest {
     }
 
     @Test
+    fun `com erro, pede foco no primeiro campo invalido na ordem da tela`() = runTest {
+        val vm = criarViewModel()
+        vm.onValorChange("500000") // valor certo: o primeiro com erro passa a ser a renda
+
+        vm.eventos.test {
+            vm.onSimular()
+            assertEquals(SimularEvento.FocarCampo(Campo.RENDA), awaitItem())
+        }
+    }
+
+    @Test
     fun `editar um campo limpa so o erro dele`() = runTest {
         val vm = criarViewModel()
         vm.onSimular()

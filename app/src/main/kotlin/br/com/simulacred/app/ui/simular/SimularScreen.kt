@@ -1,11 +1,5 @@
 package br.com.simulacred.app.ui.simular
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -14,15 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,8 +35,12 @@ fun SimularScreen(
 ) {
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
+    val focos = remember { Campo.entries.associateWith { FocusRequester() } }
     val mensagemErro = stringResource(R.string.simular_erro_inesperado)
     val lifecycleOwner = LocalLifecycleOwner.current
+    // O efeito abaixo só reinicia se o ViewModel mudar; sem rememberUpdatedState
+    // ele chamaria para sempre o lambda de navegação da primeira composição.
+    val irParaResultado by rememberUpdatedState(onIrParaResultado)
 
     // Eventos só são consumidos com a tela visível (STARTED): navegar com o
     // app em segundo plano pode lançar exceção ou perder o evento.
@@ -53,7 +48,8 @@ fun SimularScreen(
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.eventos.collect { evento ->
                 when (evento) {
-                    is SimularEvento.IrParaResultado -> onIrParaResultado(evento.simulacaoId)
+                    is SimularEvento.IrParaResultado -> irParaResultado(evento.simulacaoId)
+                    is SimularEvento.FocarCampo -> focos.getValue(evento.campo).requestFocus()
                     SimularEvento.ErroInesperado -> snackbar.showSnackbar(mensagemErro)
                 }
             }
@@ -63,6 +59,7 @@ fun SimularScreen(
     SimularConteudo(
         estado = estado,
         snackbar = snackbar,
+        focos = focos,
         onValorChange = viewModel::onValorChange,
         onPrazoChange = viewModel::onPrazoChange,
         onRendaChange = viewModel::onRendaChange,
@@ -84,6 +81,7 @@ fun SimularConteudo(
     onIrParaHistorico: () -> Unit,
     modifier: Modifier = Modifier,
     snackbar: SnackbarHostState = remember { SnackbarHostState() },
+    focos: Map<Campo, FocusRequester> = remember { Campo.entries.associateWith { FocusRequester() } },
 ) {
     TelaBase(
         titulo = stringResource(R.string.titulo_simular),
@@ -100,6 +98,7 @@ fun SimularConteudo(
             rotulo = stringResource(R.string.simular_rotulo_valor),
             apoio = stringResource(R.string.simular_apoio_valor),
             erro = estado.erros[Campo.VALOR]?.let { textoDoErro(it) },
+            focusRequester = focos.getValue(Campo.VALOR),
         )
         SeletorPrazo(prazoSelecionado = estado.prazo, onPrazoChange = onPrazoChange)
         CampoMoeda(
@@ -108,6 +107,7 @@ fun SimularConteudo(
             rotulo = stringResource(R.string.simular_rotulo_renda),
             apoio = stringResource(R.string.simular_apoio_renda),
             erro = estado.erros[Campo.RENDA]?.let { textoDoErro(it) },
+            focusRequester = focos.getValue(Campo.RENDA),
         )
         CampoNumerico(
             valor = estado.idade,
@@ -116,32 +116,18 @@ fun SimularConteudo(
             erro = estado.erros[Campo.IDADE]?.let { textoDoErro(it) },
             imeAction = ImeAction.Done,
             onConcluir = onSimular,
+            focusRequester = focos.getValue(Campo.IDADE),
         )
-        if (estado.carregando) {
-            Calculando()
-        } else {
-            BotaoGrande(texto = stringResource(R.string.acao_simular), onClick = onSimular)
-        }
+        BotaoGrande(
+            texto = stringResource(R.string.acao_simular),
+            onClick = onSimular,
+            carregando = estado.carregando,
+            textoCarregando = stringResource(R.string.simular_calculando),
+        )
         BotaoGrandeSecundario(
             texto = stringResource(R.string.acao_ver_historico),
             onClick = onIrParaHistorico,
         )
-    }
-}
-
-/** Fica no lugar do botão enquanto calcula; o TalkBack anuncia a mudança. */
-@Composable
-private fun Calculando() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .semantics { liveRegion = LiveRegionMode.Polite },
-        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        CircularProgressIndicator(modifier = Modifier.size(28.dp))
-        Text(stringResource(R.string.simular_calculando), style = MaterialTheme.typography.titleMedium)
     }
 }
 

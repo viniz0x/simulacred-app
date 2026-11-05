@@ -21,6 +21,7 @@ data class SimularUiState(
     val carregando: Boolean = false,
 )
 
+/** Na ordem em que aparecem na tela: o primeiro com erro é o que recebe o foco. */
 enum class Campo { VALOR, RENDA, IDADE }
 
 /** Código do erro; o texto fica em strings.xml (o ViewModel não conhece Context). */
@@ -29,6 +30,9 @@ enum class ErroValidacao { OBRIGATORIO, VALOR_ZERO, VALOR_ACIMA_DO_MAXIMO, IDADE
 sealed interface SimularEvento {
     data class IrParaResultado(val simulacaoId: String) : SimularEvento
     data object ErroInesperado : SimularEvento
+
+    /** Leva o foco (e a rolagem) ao primeiro campo com erro, que pode estar fora da tela. */
+    data class FocarCampo(val campo: Campo) : SimularEvento
 }
 
 /**

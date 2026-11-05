@@ -63,6 +63,9 @@ class SimularViewModel(
         val erros = estado.validar()
         if (erros.isNotEmpty()) {
             _uiState.update { it.copy(erros = erros) }
+            // Sem isto, com fonte grande o erro do valor fica fora da tela e
+            // parece que o botão não funcionou. O canal tem buffer: trySend não falha.
+            _eventos.trySend(SimularEvento.FocarCampo(Campo.entries.first { it in erros }))
             return
         }
 

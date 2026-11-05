@@ -8,8 +8,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.error
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,7 +20,9 @@ import br.com.simulacred.app.ui.formatacao.textoCampoMoeda
 
 /**
  * Campo só de números, com teclado numérico. Rótulo sempre visível (não some ao
- * digitar), texto de apoio abaixo e erro anunciado pelo TalkBack.
+ * digitar) e texto de apoio abaixo. O erro vai só no supportingText, que o
+ * TalkBack já lê junto com o campo; repetir em semantics { error() } fazia a
+ * mensagem ser anunciada duas vezes.
  */
 @Composable
 fun CampoNumerico(
@@ -33,6 +35,7 @@ fun CampoNumerico(
     imeAction: ImeAction = ImeAction.Next,
     onConcluir: () -> Unit = {},
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    focusRequester: FocusRequester? = null,
 ) {
     OutlinedTextField(
         value = valor,
@@ -47,7 +50,7 @@ fun CampoNumerico(
         keyboardActions = KeyboardActions(onDone = { onConcluir() }),
         modifier = modifier
             .fillMaxWidth()
-            .then(if (erro != null) Modifier.semantics { error(erro) } else Modifier),
+            .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier),
     )
 }
 
@@ -61,6 +64,7 @@ fun CampoMoeda(
     apoio: String? = null,
     erro: String? = null,
     imeAction: ImeAction = ImeAction.Next,
+    focusRequester: FocusRequester? = null,
 ) {
     CampoNumerico(
         valor = centavos,
@@ -71,6 +75,7 @@ fun CampoMoeda(
         erro = erro,
         imeAction = imeAction,
         visualTransformation = MoedaVisualTransformation,
+        focusRequester = focusRequester,
     )
 }
 
@@ -78,7 +83,7 @@ fun CampoMoeda(
  * Mostra os centavos digitados como reais. O cursor fica sempre no fim:
  * os números entram da direita, como em caixa eletrônico.
  */
-private object MoedaVisualTransformation : VisualTransformation {
+internal object MoedaVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val formatado = textoCampoMoeda(text.text)
         val mapeamento = object : OffsetMapping {
