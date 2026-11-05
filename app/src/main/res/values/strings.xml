@@ -14,10 +14,31 @@
 
     <!-- Simular -->
     <string name="simular_introducao">Informe quanto você precisa e em quantos meses quer pagar. Mostramos o valor de cada parcela antes de qualquer decisão.</string>
+    <string name="simular_rotulo_valor">Quanto você precisa?</string>
+    <string name="simular_apoio_valor">Emprestamos de R$ 500 a R$ 30.000. Digite só os números.</string>
+    <string name="simular_rotulo_prazo">Em quantos meses quer pagar?</string>
+    <string name="simular_rotulo_renda">Quanto você recebe por mês?</string>
+    <string name="simular_apoio_renda">Salário, aposentadoria ou pensão. Digite só os números.</string>
+    <string name="simular_rotulo_idade">Qual a sua idade?</string>
+    <string name="simular_calculando">Calculando a sua simulação…</string>
+    <string name="simular_erro_inesperado">Não foi possível fazer a simulação agora. Tente de novo.</string>
+
+    <plurals name="meses">
+        <item quantity="one">%d mês</item>
+        <item quantity="other">%d meses</item>
+    </plurals>
+
+    <!-- Erros de preenchimento -->
+    <string name="erro_obrigatorio">Preencha este campo.</string>
+    <string name="erro_valor_zero">O valor precisa ser maior que zero.</string>
+    <string name="erro_valor_acima_do_maximo">O valor pode ser de até R$ 1.000.000,00.</string>
+    <string name="erro_idade">Informe uma idade entre %1$d e %2$d anos.</string>
 
     <!-- Resultado -->
     <string name="resultado_em_construcao">Aqui vão aparecer o valor da parcela, o total a pagar e o cronograma.</string>
     <string name="resultado_codigo">Código da simulação: %1$s</string>
+    <string name="resultado_nao_encontrada">Simulação não encontrada</string>
+    <string name="resultado_nao_encontrada_explicacao">Não achamos esta simulação no aparelho. Volte e faça uma nova; leva menos de um minuto.</string>
 
     <!-- Histórico -->
     <string name="historico_vazio">Você ainda não tem simulações salvas. Elas aparecem aqui e ficam disponíveis mesmo sem internet.</string>
