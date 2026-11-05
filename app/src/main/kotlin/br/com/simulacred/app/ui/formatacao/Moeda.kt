@@ -2,20 +2,28 @@ package br.com.simulacred.app.ui.formatacao
 
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
 
-// Formatação manual em vez de NumberFormat.getCurrencyInstance: a versão do
-// sistema usa espaço não separável entre "R$" e o número, e isso muda entre
-// versões do Android, o que quebraria testes e comparação de textos.
+// Formatação manual, sem NumberFormat/DecimalFormat:
+// - o NumberFormat de moeda do sistema usa espaço não separável entre "R$" e o
+//   número, e isso muda entre versões do Android (quebraria testes e textos);
+// - o DecimalFormat não é thread-safe, então teria de ser recriado a cada
+//   chamada, e esta função roda a cada tecla e em cada linha do cronograma.
 
-private val simbolosBr = DecimalFormatSymbols(Locale.forLanguageTag("pt-BR"))
-
-/** "R$ 6.205,38". Cria o DecimalFormat a cada chamada: ele não é thread-safe. */
+/** "R$ 6.205,38". Arredonda para 2 casas com HALF_EVEN, como o resto do app. */
 fun formatarMoeda(valor: BigDecimal): String {
-    val formato = DecimalFormat("#,##0.00", simbolosBr).apply { roundingMode = RoundingMode.HALF_EVEN }
-    return "R$ " + formato.format(valor)
+    val texto = valor.setScale(2, RoundingMode.HALF_EVEN).abs().toPlainString()
+    val inteiros = texto.substringBefore('.')
+    val centavos = texto.substringAfter('.')
+    val sinal = if (valor.signum() < 0) "-" else ""
+    return "${sinal}R$ ${agruparMilhares(inteiros)},$centavos"
+}
+
+/** "1234567" → "1.234.567". */
+private fun agruparMilhares(digitos: String): String = buildString(digitos.length + digitos.length / 3) {
+    digitos.forEachIndexed { indice, digito ->
+        if (indice > 0 && (digitos.length - indice) % 3 == 0) append('.')
+        append(digito)
+    }
 }
 
 /** Dígitos digitados no campo de dinheiro (em centavos) → reais. "500000" → 5000.00. */

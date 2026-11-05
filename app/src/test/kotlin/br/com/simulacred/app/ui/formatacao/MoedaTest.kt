@@ -12,6 +12,15 @@ class MoedaTest {
         assertEquals("R$ 6.205,38", formatarMoeda(BigDecimal("6205.38")))
         assertEquals("R$ 1.000.000,00", formatarMoeda(BigDecimal("1000000")))
         assertEquals("R$ 0,05", formatarMoeda(BigDecimal("0.05")))
+        assertEquals("R$ 999,00", formatarMoeda(BigDecimal("999")))
+        assertEquals("R$ 100.000,00", formatarMoeda(BigDecimal("100000")))
+    }
+
+    @Test
+    fun `arredonda com HALF_EVEN e mantem o sinal`() {
+        assertEquals("R$ 0,12", formatarMoeda(BigDecimal("0.125"))) // empate: vai para o par
+        assertEquals("R$ 0,14", formatarMoeda(BigDecimal("0.135")))
+        assertEquals("-R$ 1.205,38", formatarMoeda(BigDecimal("-1205.38")))
     }
 
     @Test
